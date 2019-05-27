@@ -163,7 +163,8 @@
         let wrkChainRoot = new WRKChainRoot('<%= WRKCHAIN_ROOT_CONTRACT_ADDRESS%>',
                                 '<%= MAINCHAIN_WEB3_PROVIDER_URL%>',
                                 '<%= WRKCHAIN_WEB3_PROVIDER_URL%>',
-                                <%- JSON.stringify(WRKCHAIN_ROOT_ABI)%>);
+                                <%- JSON.stringify(WRKCHAIN_ROOT_ABI)%>,
+                                <%= WRKCHAIN_NETWORK_ID%>);
 
         $('#check_block').click(function() {
           let block_num = $('#block_num').val();
@@ -178,7 +179,7 @@
         function validateBlock(block_num) {
             wrkChainRoot.validateBlock(block_num, function(block, root_data) {
 
-                if(root_data.hash == '0x0000000000000000000000000000000000000000000000000000000000000000') {
+                if(root_data.returnValues._hash == '0x0000000000000000000000000000000000000000000000000000000000000000') {
                   $('#no_data').text('No data currently stored in Worckchain Root for Block #' + block_num);
                   $('#no_data').show();
                   $('#validation_container').hide();
@@ -199,8 +200,8 @@
 
                 //Block hash
                 $('#block_hash').text(block.hash);
-                $('#wrkchain_root_hash').text(root_data.hash);
-                if(root_data.hash == block.hash) {
+                $('#wrkchain_root_hash').text(root_data.returnValues._hash);
+                if(root_data.returnValues._hash == block.hash) {
                   $('#hash_valid').text("YES");
                   $('#hash_valid').css('color', 'green');
                   hash_valid = true;
@@ -211,8 +212,8 @@
 
                 //Parent Hash
                 $('#parent_block_hash').text(block.parentHash);
-                $('#parent_wrkchain_root_hash').text(root_data.parent_hash);
-                if(root_data.parent_hash == block.parentHash) {
+                $('#parent_wrkchain_root_hash').text(root_data.returnValues._parentHash);
+                if(root_data.returnValues._parentHash == block.parentHash) {
                   $('#parent_hash_valid').text("YES");
                   $('#parent_hash_valid').css('color', 'green');
                   parent_hash_valid = true;
@@ -223,8 +224,8 @@
 
                 //Tx Root
                 $('#block_tx_root').text(block.transactionsRoot);
-                $('#wrkchain_tx_root').text(root_data.tx_root);
-                if(root_data.tx_root == block.transactionsRoot) {
+                $('#wrkchain_tx_root').text(root_data.returnValues._txRoot);
+                if(root_data.returnValues._txRoot == block.transactionsRoot) {
                   $('#tx_root_valid').text("YES");
                   $('#tx_root_valid').css('color', 'green');
                   tx_valid = true;
@@ -235,8 +236,8 @@
 
                 //State Root
                 $('#block_state_root').text(block.stateRoot);
-                $('#wrkchain_state_root').text(root_data.state_root);
-                if(root_data.state_root == block.stateRoot) {
+                $('#wrkchain_state_root').text(root_data.returnValues._stateRoot);
+                if(root_data.returnValues._stateRoot == block.stateRoot) {
                   $('#state_root_valid').text("YES");
                   $('#state_root_valid').css('color', 'green');
                   state_valid = true;
@@ -247,8 +248,8 @@
 
                 //Receipts Root
                 $('#block_receipts_root').text(block.receiptsRoot);
-                $('#wrkchain_receipts_root').text(root_data.receipt_root);
-                if(root_data.receipt_root == block.receiptsRoot) {
+                $('#wrkchain_receipts_root').text(root_data.returnValues._receiptRoot);
+                if(root_data.returnValues._receiptRoot == block.receiptsRoot) {
                   $('#receipts_root_valid').text("YES");
                   $('#receipts_root_valid').css('color', 'green');
                   receipts_valid = true;

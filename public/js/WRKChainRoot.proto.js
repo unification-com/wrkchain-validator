@@ -1,13 +1,15 @@
 function WRKChainRoot(_wrkchainRootContractAddress,
                        _mainchainWeb3ProviderUrl,
                        _wrkchainWeb3ProviderUrl,
-                       _wrkchainRootAbi) {
+                       _wrkchainRootAbi,
+                       _wrkchainNetworkId) {
 
-    let abi = _wrkchainRootAbi.replace(/\\(.)/mg, "$1");
+    //let abi = _wrkchainRootAbi.replace(/\\(.)/mg, "$1");
 
     this.web3jsMainchain = null;
     this.contractAddress = _wrkchainRootContractAddress;
-    this.abi = JSON.parse(abi);
+    this.abi = _wrkchainRootAbi;
+    this.wrkchainNetworkId = parseInt(_wrkchainNetworkId);
 
     let self = this;
 
@@ -43,9 +45,20 @@ WRKChainRoot.prototype.runBlockHeaderFromRoot = async function (_block_num) {
 WRKChainRoot.prototype.getBlockHeaderFromRoot = function (_block_num) {
     let self = this;
     return new Promise(resolve => {
-        self.wrkchainRootContract.methods.getHeader(_block_num).call().then(function (wrkchain_root_data) {
-            resolve(wrkchain_root_data);
-        })
+
+        self.wrkchainRootContract.getPastEvents('RecordHeader', {
+            filter: {_chainId: this.wrkchainNetworkId, _height: _block_num},
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, (error, events) => {
+           if(error) {
+               console.log("error", error);
+
+           } else {
+               let latestEvent = events[0]
+               resolve(latestEvent);
+           }
+         });
     });
 }
 
