@@ -30,11 +30,10 @@ The variables are as follows:
 
 `MAINCHAIN_EXPLORER_URL`: The URL for the **UND Mainchain** Block Explorer  
 `MAINCHAIN_WEB3_PROVIDER_URL`: The Web3 Provider URL for the **UND Mainchain**  
-`WRKCHAIN_NAME`: The name of your WRKCHain  
-`WRKCHAIN_ROOT_ABI`: The full ABI for the WRKCHain Root smart contract  
-`WRKCHAIN_ROOT_CONTRACT_ADDRESS`: The address for your WRKCHain's deployed WRKChain Root Smart Contract  
-`WRKCHAIN_ROOT_WRITE_TIMEOUT`: Frequency your WRKCHain Oracle writes hashes to the WRKCHain Root Smart Contract, in seconds  
-`WRKCHAIN_WEB3_PROVIDER_URL`: The Web3 Provider URL for **your WRKCHain**  
+`WRKCHAIN_NAME`: The name of your WRKChain  
+`WRKCHAIN_NETWORK_ID`: **Your WRKChain** network ID  
+`WRKCHAIN_ROOT_WRITE_TIMEOUT`: Frequency **your WRKChain Oracle** writes hashes to the WRKCHain Root Smart Contract, in seconds  
+`WRKCHAIN_WEB3_PROVIDER_URL`: The Web3 Provider URL for **your WRKChain**  
 `WRKCHAIN_VALIDATOR_SERVICE_PORT`: Port on which you would like this server to run. Optional - default is port 4040
 
 ### Run
