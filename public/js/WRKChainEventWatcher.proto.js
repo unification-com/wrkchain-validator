@@ -1,11 +1,15 @@
-function WRKChainEventWatcher(_contractAddress, _web3ProviderUrl, _abi) {
+function WRKChainEventWatcher(_contractAddress,
+                              _web3ProviderUrl,
+                              _abi,
+                              _wrkchainNetworkId) {
 
-    let abi = _abi.replace(/\\(.)/mg, "$1");
+    //let abi = _abi.replace(/\\(.)/mg, "$1");
 
     this.web3js = null;
     this.contractAddress = _contractAddress;
-    this.abi = JSON.parse(abi);
+    this.abi = _abi;
     this.lastEvent = null;
+    this.wrkchainNetworkId = parseInt(_wrkchainNetworkId);
 
     let self = this;
 
@@ -17,11 +21,12 @@ function WRKChainEventWatcher(_contractAddress, _web3ProviderUrl, _abi) {
 
 WRKChainEventWatcher.prototype.getLatestRecordedHeader = function(_callback) {
 
-    let self = this;
+    let self = this
 
     this.getCurrentBlockNumber().then(blockNumber => {
         self.wrkchainRootContract.getPastEvents('RecordHeader', {
-            fromBlock: blockNumber -1,
+            filter: {_chainId: this.wrkchainNetworkId},
+            fromBlock: blockNumber -10,
             toBlock: 'latest'
         }, (error, events) => {
            if(error) {
@@ -32,8 +37,9 @@ WRKChainEventWatcher.prototype.getLatestRecordedHeader = function(_callback) {
                    _callback(false, error);
                }
            } else {
-               self.lastEvent = events;
-               _callback(true, events);
+               let latestEvent = events[events.length - 1]
+               self.lastEvent = latestEvent;
+               _callback(true, latestEvent);
            }
          });
         return;
@@ -41,6 +47,11 @@ WRKChainEventWatcher.prototype.getLatestRecordedHeader = function(_callback) {
 }
 
 WRKChainEventWatcher.prototype.getCurrentBlockNumber = async function () {
+    let blockNumber = await this.web3js.eth.getBlockNumber();
+    return blockNumber;
+}
+
+WRKChainEventWatcher.prototype.getChainId = async function () {
     let blockNumber = await this.web3js.eth.getBlockNumber();
     return blockNumber;
 }
