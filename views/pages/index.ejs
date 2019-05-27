@@ -31,7 +31,8 @@
     <!-- Begin page content -->
     <main role="main" class="container">
         <br>
-    <h1 class="mt-5">Latest <%= WRKCHAIN_NAME%> Block recorded on Mainchain</h1>
+        <h1 class="mt-5">Latest <%= WRKCHAIN_NAME%> Block recorded on Mainchain</h1>
+        <h2>WRKChain Network ID: <%= WRKCHAIN_NETWORK_ID%></h2>
     <p class="lead">
         <strong>Status: </strong> <span id="status"></span><br>
         <h3><%= WRKCHAIN_NAME%> Block #<span id="block_num"></span> Submitted to Mainchain (<a href="#" id="validate_link">Validate block</a>)</h3>
@@ -45,7 +46,6 @@
         <br>
 
         <h3>Mainchain Info</h3>
-        <strong><%= WRKCHAIN_NAME%>'s WRKChain Root Contract on Mainchain:</strong> <a href="<%= MAINCHAIN_EXPLORER_URL%>/address/<%= WRKCHAIN_ROOT_CONTRACT_ADDRESS%>" target="_blank"><%= WRKCHAIN_ROOT_CONTRACT_ADDRESS%></a><br>
         <strong>Submitted in Mainchain Tx:</strong> <a target="_blank" id="tx"></a><br>
         <strong>Next check:</strong> <span id="next_block"><%= WRKCHAIN_ROOT_WRITE_TIMEOUT%></span>
     </p>
@@ -78,7 +78,8 @@
 
         let wrkChainEventWatcher = new WRKChainEventWatcher('<%= WRKCHAIN_ROOT_CONTRACT_ADDRESS%>',
                                 '<%= MAINCHAIN_WEB3_PROVIDER_URL%>',
-                                <%- JSON.stringify(WRKCHAIN_ROOT_ABI)%>);
+                                <%- JSON.stringify(WRKCHAIN_ROOT_ABI)%>,
+                                <%= WRKCHAIN_NETWORK_ID%>);
         updateWatcher();
         setInterval(function(){
             updateWatcher();
@@ -91,24 +92,22 @@
         function updateWatcher() {
             $('#status').text("Fetching data");
             $('#next_block').text(<%= WRKCHAIN_ROOT_WRITE_TIMEOUT%> + 1);
-            wrkChainEventWatcher.getLatestRecordedHeader(function(success, results) {
-                if(success && results.length > 0) {
-                    let data = results[0];
+            wrkChainEventWatcher.getLatestRecordedHeader(function(success, data) {
+                if(success && data) {
                     let now = new Date(Date.now());
-                    $('#block_num').text(data.returnValues.height);
+                    $('#block_num').text(data.returnValues._height);
                     $('#block_time').text(now.toString());
                     $('#tx').text(data.transactionHash);
                     $('#tx').attr('href','<%= MAINCHAIN_EXPLORER_URL%>/tx/' + data.transactionHash);
-                    $('#hash').text(data.returnValues.hash);
-                    $('#parent_hash').text(data.returnValues.parent_hash);
-                    $('#receipt_root').text(data.returnValues.receipt_root);
-                    $('#tx_root').text(data.returnValues.tx_root);
-                    $('#state_root').text(data.returnValues.state_root);
-                    $('#sunrise').text(data.returnValues.sunrise);
-                    $('#sealer').text(data.returnValues.sealer);
+                    $('#hash').text(data.returnValues._hash);
+                    $('#parent_hash').text(data.returnValues._parentHash);
+                    $('#receipt_root').text(data.returnValues._receiptRoot);
+                    $('#tx_root').text(data.returnValues._txRoot);
+                    $('#state_root').text(data.returnValues._stateRoot);
+                    $('#sealer').text(data.returnValues._blockSigner);
                     $('#status').text("Success");
 
-                    $('#validate_link').attr('href','/validate?block=' + data.returnValues.height)
+                    $('#validate_link').attr('href','/validate?block=' + data.returnValues._height)
 
                 } else {
                     console.log(results);
