@@ -21,12 +21,18 @@ function WRKChainEventWatcher(_contractAddress,
 
 WRKChainEventWatcher.prototype.getLatestRecordedHeader = function(_callback) {
 
-    let self = this
+    let self = this;
 
     this.getCurrentBlockNumber().then(blockNumber => {
+
+        let fromBlock = blockNumber -10;
+        if(fromBlock < 0) {
+          fromBlock = 0;
+        }
+
         self.wrkchainRootContract.getPastEvents('RecordHeader', {
             filter: {_chainId: this.wrkchainNetworkId},
-            fromBlock: blockNumber -10,
+            fromBlock: fromBlock,
             toBlock: 'latest'
         }, (error, events) => {
            if(error) {
